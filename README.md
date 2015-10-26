@@ -1,44 +1,49 @@
-# monaca-plugin
-※対象が日本ユーザーなので、日本語で。。
+# Cordova Plugin of Kii Cloud
 
-[Monaca](https://ja.monaca.io/)用のプラグインです。Cordova 4.1用のプラグインとして作ります。
+This is a Cordova 4.1 plugin of Kii Cloud. Can be imported to your [Monaca](https://monaca.io/) projects.
 
-## プラグインの使い方
+This plugin uses Kii Cloud JavaScript SDK. For the detail, please confirm  the [Guide](http://documentation.kii.com/en/guides/javascript/) documentation.
 
-まず、プラグインを有効にします。Monacaでプロジェクトを作成し、開いている状態とします。
+## Import to Monaca project
 
-### プラグインがMonaca側に取り込まれた後
+After created a new project. You need to import this plugin.
 
-1. ファイル -> Cordovaプラグインの管理
-2. KiiCloudPluginを有効にする
+1. Clone source code of this repository.
 
-### プラグイン開発中の場合
+  **Note**: The Kii Cloud JavaScript SDK is not updated automatically in this repository. To use the latest version of SDK, please download from [Kii Cloud](https://developer.kii.com/v2/downloads). Then replace the library file `www/kiisdk.js` with the downloaded JS file.
 
-1. cloneし、monacaブランチに切り替えます
-2. plugin.xml/src/wwwをzipする。MacのFinderでもOK。zip -r monaca.zip plugin.xml src www
-3. Monacaで、ファイル -> Cordovaプラグインの管理
-4. Cordovaプラグインのインポートで、2番で作成したzipを選択
+2. Compress `plugin.xml`, `src` folder and `www` folder, which are located under root folder, to a zip file.
+  ```
+  $ zip -r monaca.zip plugin.xml src www
+  ```
+3. Import the plugin to Monaca.
+  * Click `File` -> `Manage Cordova Plugins`
+  * On the Cordova Plugins page, click `Import Cordova Plugin` button, then select the plugin zip file(`monaca.zip`) generated in step 2.
 
-プラグインを更新する場合は、一度削除してから再度インポートしたほうが確実
+  **Note**: If you would like to update the plugin, remove the old plugin, then import new one.
 
-プラグインを有効にしたら、JavaScriptで次のコードを実行します。
+## Usage
+
+After imported this plugin in Monaca, you can use Kii Cloud features in your project.
+
+This plugin can enable your project to handle GCM notification of Android and APNS of iOS with Kii Cloud. For the detail of using push notification in Kii Cloud, please confirm the [Guild](http://documentation.kii.com/en/starts/cloudsdk/managing-push-notification/).
+
+### Initialize Kii Cloud
 
 ```
-// kiiオブジェクトの初期化
-
 var kii
 document.addEventListener('deviceready', function () {
-  // Kii SDKのトップレベルのオブジェクトがkii配下に入る
-  // kii.KiiUserやkii.KiiSiteのようにアクセスする
+  // The top level apis of Kii Cloud are under kii scope
+  // ex. To use KiiUser or KiiSite, you should use kii.KiiUser or kii.KiiSite
   kii = window.kii.create();
-  kii.Kii.initializeWithSite(APP_ID, APP_KEY, kii.KiiSite.JP);
-  
-  // Android用の初期設定
-  // SharedPreferencesにいろいろ書き込みます
-  // 第1引数はGCMのSENDER_ID
-  // 第2引数はアプリ起動時にPushが来た時に実行する関数名
-  // 第3引数は成功失敗のcallbackと、バックグラウンド時にどう通知を出すかの設定
-  // 設定項目はUnityのをほぼそのまま流用してます。
+
+  // Replace APP_ID, APP_KEY, and APP_SITE with correct ones.
+  kii.Kii.initializeWithSite(APP_ID, APP_KEY, APP_SITE);
+
+  // Setup GCM push for Android App
+  // 1st parameter: SENDER_ID of GCM.
+  // 2nd parameter: name of callback function when received GCM notification.
+  // 3rd parameter: success callback, fail callback, and settings for the notification in background.
   window.kiiPush.initAndroid("125448119133", "pushReceived", {
     user: {
       ledColor: "#FFFF00FF",
@@ -59,10 +64,9 @@ document.addEventListener('deviceready', function () {
   });
 });
 
-// デバイスの登録(installation)
-// 第1引数は、ログイン済みのwindow.kii.create()で作ったオブジェクト
-// AppID/AppKey/Token/BaseURLの取得に使います
-// 第2引数は、アプリ起動時にPushが来た時に実行する関数名とcallback
+// Register device(installation)
+// 1st parameter: the object after called window.kii.create()
+// 2nd parameter: name of callback function when received GCM message, success callback and failure callback
 window.kiiPush.register(kii, {
   received: "pushReceived",
   success: function (token) {
@@ -74,12 +78,14 @@ window.kiiPush.register(kii, {
 });
 
 function pushReceived(data) {
-  // dataはPushで送ったJSONそのもの（のはず。。。
+  // received JSON formated message,
 }
 ```
 
-## 制限事項
+## Limitation of Push
 
-Android / iOS両方でリリースビルドしないと実機では動作しません。
-Androidはもしかしたらカスタムデバッガーのビルドで動作するかもしれませんが、動作保証対象外としたいです。
+Push for iOS app only works with Release Build.
 
+## Sample
+
+There is a [Monca sample project](https://github.com/KiiPlatform/monaca-plugin-sample).
