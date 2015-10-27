@@ -1,30 +1,22 @@
 # Cordova Plugin of Kii Cloud
 
-This is a Cordova 4.1 plugin of Kii Cloud. Can be imported to your [Monaca](https://monaca.io/) projects.
-
 This plugin uses Kii Cloud JavaScript SDK. For the detail, please confirm  the [Guide](http://documentation.kii.com/en/guides/javascript/) documentation.
 
-## Import to Monaca project
+## Add plugin in to Cordova project
 
-After created a new project. You need to import this plugin.
+### Configure Cordova environment
 
-1. Clone source code of this repository.
+Please check the official site for the [Guild](https://cordova.apache.org/#getstarted)
 
-  **Note**: The Kii Cloud JavaScript SDK is not updated automatically in this repository. To use the latest version of SDK, please download from [Kii Cloud](https://developer.kii.com/v2/downloads). Then replace the library file `www/kiisdk.js` with the downloaded JS file.
+### Add kiicloud-plugin
 
-2. Compress `plugin.xml`, `src` folder and `www` folder, which are located under root folder, to a zip file.
-  ```
-  $ zip -r monaca.zip plugin.xml src www
-  ```
-3. Import the plugin to Monaca.
-  * Click `File` -> `Manage Cordova Plugins`
-  * On the Cordova Plugins page, click `Import Cordova Plugin` button, then select the plugin zip file(`monaca.zip`) generated in step 2.
-
-  **Note**: If you would like to update the plugin, remove the old plugin, then import new one.
+```
+$ cordova plugin add https://github.com/KiiCorp/monaca-plugin-dev#cordova
+```
 
 ## Usage
 
-After imported this plugin in Monaca, you can use Kii Cloud features in your project.
+After added this plugin, you can use Kii Cloud features in your project.
 
 This plugin can enable your project to handle GCM notification of Android and APNS of iOS with Kii Cloud. For the detail of using push notification in Kii Cloud, please confirm the [Guild](http://documentation.kii.com/en/starts/cloudsdk/managing-push-notification/).
 
@@ -44,7 +36,9 @@ document.addEventListener('deviceready', function () {
   // 1st parameter: SENDER_ID of GCM.
   // 2nd parameter: name of callback function when received GCM notification.
   // 3rd parameter: success callback, fail callback, and settings for the notification in background.
-  window.kiiPush.initAndroid("125448119133", "pushReceived", {
+
+  // replace the sender_id with appropriate value
+  window.kiiPush.initAndroid("sender_id", "pushReceived", {
     user: {
       ledColor: "#FFFF00FF",
       notificatonText: "user"
@@ -82,10 +76,6 @@ function pushReceived(data) {
 }
 ```
 
-## Limitation of Push
-
-Push for iOS app only works with Release Build.
-
 ## Sample
 
-There is a [Monca sample project](https://github.com/KiiPlatform/monaca-plugin-sample).
+There is a [Sample project](https://github.com/KiiPlatform/cordova-plugin-sample).
